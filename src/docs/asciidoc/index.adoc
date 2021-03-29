@@ -1,0 +1,23 @@
+= RESTful Test API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+[[api]]
+== Test-Get-User Api
+api 에 관련된 설명을 이곳에 적습니다.
+
+include::{snippets}/test-get-user/curl-request.adoc[]
+include::{snippets}/test-get-user/http-request.adoc[]
+include::{snippets}/test-get-user/http-response.adoc[]
+include::{snippets}/test-get-user/httpie-request.adoc[]
+include::{snippets}/test-get-user/request-body.adoc[]
+include::{snippets}/test-get-user/request-headers.adoc[]
+include::{snippets}/test-get-user/response-body.adoc[]
+include::{snippets}/test-get-user/response-fields.adoc[]
+include::{snippets}/test-get-user/response-headers.adoc[]
