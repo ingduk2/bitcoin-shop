@@ -1,3 +1,40 @@
+spring:
+  prifiles:
+    active: local
+
+bitcoin:
+  websocket:
+    exchanges:
+#      - name: bithumb
+#        url: wss://pubwss.bithumb.com/pub/ws
+#      - name: upbit
+#        url: wss://api.upbit.com/websocket/v1
+      - name: korbit
+        url: wss://ws.korbit.co.kr/v1/user/push
+
+# local
+---
+spring:
+  prifiles: local
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
 springdoc:
   version: v1
   api-docs:
@@ -11,20 +48,3 @@ springdoc:
     disable-swagger-default-url: true
     display-query-params-without-oauth2: true
 
-spring:
-  h2:
-    console:
-      enabled: true
-
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
