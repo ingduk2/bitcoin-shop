@@ -1,22 +1,18 @@
 package com.bitcoinshop.outer.bitcoin.websocket.client;
 
 import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParser;
+import com.bitcoinshop.outer.bitcoin.websocket.config.NettySetting;
+import com.bitcoinshop.outer.bitcoin.websocket.config.ServerInfo;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
-import io.netty.handler.ssl.SslContext;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.EventLoopGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -25,73 +21,42 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class WebSocketClient {
 
-    private final SslContext webSocketSsl;
-
-    private final WebSocketThreadPool webSocketThreadPool;
-    private final String URL;
+    private final NettySetting setting;
+    private final URI uri;
     private final BitCoinParser bitCoinParser;
 
-
-    private WebSocketClientHandler handler;
-    private Bootstrap b;
-    private EventLoopGroup group;
+    private Bootstrap bootstrap;
 
     public void start() throws Exception {
 
         log.info("WebSocketClient Start!!!");
-        URI uri = new URI(URL);
-
-        //Map.of("scheme", scheme, "host", host, "port", Integer.toString(port));
-        Map<String, String> serverInfo = WebSocketClientUtils.getServerInfo(uri);
-        String scheme = serverInfo.get("scheme");
-        final String host = serverInfo.get("host");
-        final int port = Integer.parseInt(serverInfo.get("port"));
-        log.info("ServerInfo :{},", serverInfo);
+        //get serverInfo
+        ServerInfo serverInfo = WebSocketClientUtils.getServerInfo(uri);
+        final String host = serverInfo.getHost();
+        final int port = serverInfo.getPort();
 
         //validate scheme
-        if (!"ws".equalsIgnoreCase(scheme) && !"wss".equalsIgnoreCase(scheme)) {
-            log.error("Only WS(S) is supported");
+        if (!WebSocketClientUtils.isValidUrlScheme(serverInfo.getScheme())) {
+            log.error("Only ws(s) supported");
             return;
         }
 
-//        //ssl
-//        final SslContext sslContext = null;
-//        if ("wss".equalsIgnoreCase(scheme)) {
-//            sslContext = SslContextBuilder.forClient()
-//                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-//        } else {
-//            sslContext = null;
-//        }
+        //get bootstrap
+        bootstrap = setting.bootstrap(
+                host
+                ,port
+                ,new WebSocketClientHandler(uri, bitCoinParser, this)
+        );
 
-        handler = new WebSocketClientHandler(uri, bitCoinParser, this);
+        log.info("bootstrap {}", bootstrap);
 
-        group = new NioEventLoopGroup();
-
-        b = new Bootstrap();
-        b.group(group)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) {
-                        log.info("webSocket initchannel");
-                        ChannelPipeline p = ch.pipeline();
-
-                        p.addLast(webSocketSsl.newHandler(ch.alloc(), host, port));
-                        p.addLast(
-                                new HttpClientCodec(),
-                                new HttpObjectAggregator(8192),
-                                WebSocketClientCompressionHandler.INSTANCE,
-                                handler);
-
-                    }
-                });
-
-        connect(uri.getHost(), port);
+        //connect
+        connect(host, port);
 
     }
 
     public ChannelFuture connect(String host, int port) throws InterruptedException {
-        ChannelFuture future = b.connect(host, port);
+        ChannelFuture future = bootstrap.connect(host, port);
 
         future.addListener((ChannelFutureListener) future1 -> {
             log.info("addListener");

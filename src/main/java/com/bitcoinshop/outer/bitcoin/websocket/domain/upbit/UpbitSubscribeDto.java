@@ -61,4 +61,21 @@ public class UpbitSubscribeDto {
         );
         return new ObjectMapper().writeValueAsString(objectList);
     }
+
+    public static String getSubscribeJson(String ticket, String type, List<String> markets, String format) throws JsonProcessingException {
+
+        List<Object> objectList = List.of(
+                Ticket.builder()
+                        .ticket(ticket)
+                        .build(),
+                Type.builder()
+                        .type(type)
+                        .codes(List.of("KRW-BTC"))
+                        .build(),
+                Format.builder()
+                        .format(format)
+                        .build()
+        );
+        return new ObjectMapper().writeValueAsString(objectList);
+    }
 }

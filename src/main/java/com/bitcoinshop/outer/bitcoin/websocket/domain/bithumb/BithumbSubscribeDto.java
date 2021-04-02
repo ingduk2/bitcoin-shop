@@ -36,4 +36,15 @@ public class BithumbSubscribeDto {
 
         return new ObjectMapper().writeValueAsString(bithumbSubscribeDto);
     }
+
+    public static String getSubscribeJson(List<String> currencyList) throws JsonProcessingException {
+        BithumbSubscribeDto bithumbSubscribeDto = BithumbSubscribeDto.builder()
+                .type(BithumbTYPE.ticker)
+                .symbols(currencyList)
+//                .symbols(List.of("BTC_KRW"))
+                .tickTypes(List.of("30M"))
+                .build();
+
+        return new ObjectMapper().writeValueAsString(bithumbSubscribeDto);
+    }
 }

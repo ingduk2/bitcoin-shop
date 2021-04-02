@@ -1,5 +1,6 @@
 package com.bitcoinshop.outer.bitcoin.websocket.client;
 
+import com.bitcoinshop.outer.bitcoin.websocket.config.ServerInfo;
 import lombok.experimental.UtilityClass;
 
 import java.net.URI;
@@ -7,7 +8,8 @@ import java.util.Map;
 
 @UtilityClass
 public class WebSocketClientUtils {
-    public static Map<String, String> getServerInfo(URI uri) {
+
+    public static ServerInfo getServerInfo(URI uri) {
         String scheme = uri.getScheme() == null ? "ws" : uri.getScheme();
         String host = uri.getHost() == null ? "127.0.0.1" : uri.getHost();
         int port;
@@ -23,6 +25,18 @@ public class WebSocketClientUtils {
             port = uri.getPort();
         }
 
-        return Map.of("scheme", scheme, "host", host, "port", Integer.toString(port));
+        return ServerInfo.builder()
+                .scheme(scheme)
+                .host(host)
+                .port(port)
+                .build();
     }
+
+    public static boolean isValidUrlScheme(String scheme) {
+        if (!"ws".equalsIgnoreCase(scheme) && !"wss".equalsIgnoreCase(scheme)) {
+            return false;
+        }
+        return true;
+    }
+
 }

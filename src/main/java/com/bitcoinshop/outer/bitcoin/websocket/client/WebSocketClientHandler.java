@@ -1,7 +1,7 @@
 package com.bitcoinshop.outer.bitcoin.websocket.client;
 
 import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParser;
-import io.netty.buffer.UnpooledUnsafeDirectByteBuf;
+import com.bitcoinshop.outer.bitcoin.websocket.config.ServerInfo;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -9,9 +9,7 @@ import io.netty.handler.codec.http.websocketx.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -33,29 +31,28 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
-        log.info("handlerAdded");
+        log.debug("handlerAdded");
         handshaker = WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
         handshakeFuture = ctx.newPromise();
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("channelActive");
+        log.debug("channelActive");
         handshaker.handshake(ctx.channel());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("WebSocket Client channelInactive!!!!!");
+        log.debug("WebSocket Client channelInactive!!!!!");
         final EventLoop eventLoop = ctx.channel().eventLoop();
         eventLoop.schedule(new Runnable() {
             @Override
             public void run() {
-                log.info("reconnect");
-                Map<String, String> serverInfo = WebSocketClientUtils.getServerInfo(uri);
-                final String host = serverInfo.get("host");
-                final int port = Integer.parseInt(serverInfo.get("port"));
-
+                log.debug("reconnect");
+                ServerInfo serverInfo = WebSocketClientUtils.getServerInfo(uri);
+                final String host = serverInfo.getHost();
+                final int port = serverInfo.getPort();
                 try {
                     webSocketClient.connect(host, port);
                 } catch (InterruptedException e) {
@@ -80,7 +77,6 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         Channel ch = ctx.channel();
         log.info("msg {}", msg);
-        log.info("handshaker : {}", handshaker.isHandshakeComplete());
         if (!handshaker.isHandshakeComplete()) {
             try {
                 handshaker.finishHandshake(ch, (FullHttpResponse) msg);
@@ -89,10 +85,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                 log.error("WebSocket Client failed to connect");
                 handshakeFuture.setFailure(e);
             }
-            return;
+
         }
 
-        bitCoinParser.parse((WebSocketFrame) msg, ch);
+        bitCoinParser.parse(msg, ch);
 
     }
 }

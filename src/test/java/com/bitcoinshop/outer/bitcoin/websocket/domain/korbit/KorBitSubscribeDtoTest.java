@@ -11,7 +11,7 @@ class KorBitSubscribeDtoTest {
 
     @Test
     void korbit_요청_json_생성_테스트() throws JsonProcessingException {
-        String json = KorBitSubscribeDto.of(null, KorBitSubscribeDto.Events.SUBSCRIBE, Stream.of("ticker:btc_krw,eth_krw,xrp_krw"));
+        String json = KorBitSubscribeDto.of(null, KorBitSubscribeDto.Events.SUBSCRIBE, "ticker:btc_krw,eth_krw,xrp_krw");
         System.out.println(json);
     }
 

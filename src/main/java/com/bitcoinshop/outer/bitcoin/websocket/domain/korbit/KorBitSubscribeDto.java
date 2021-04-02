@@ -48,13 +48,13 @@ public class KorBitSubscribeDto {
         private List<String> channels;
     }
 
-    public static String of(String accessToken, Events event, Stream<String> channels) throws JsonProcessingException {
+    public static String of(String accessToken, Events event, String channels) throws JsonProcessingException {
         KorBitSubscribeDto korBitSubscribeDto = KorBitSubscribeDto.builder()
                 .accessToken(null)
                 .timestamp(Instant.now().getEpochSecond())
                 .event(event.getEvent())
                 .data(Channels.builder()
-                        .channels(channels.collect(Collectors.toList()))
+                        .channels(Stream.of(channels).collect(Collectors.toList()))
                         .build())
                 .build();
 

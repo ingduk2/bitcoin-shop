@@ -1,21 +1,25 @@
 spring:
-  prifiles:
+  profiles:
     active: local
+
+#logging:
+#  level:
+#    root: debug
 
 bitcoin:
   websocket:
     exchanges:
-#      - name: bithumb
-#        url: wss://pubwss.bithumb.com/pub/ws
-#      - name: upbit
-#        url: wss://api.upbit.com/websocket/v1
+      - name: bithumb
+        url: wss://pubwss.bithumb.com/pub/ws
+      - name: upbit
+        url: wss://api.upbit.com/websocket/v1
       - name: korbit
         url: wss://ws.korbit.co.kr/v1/user/push
 
 # local
 ---
 spring:
-  prifiles: local
+  profiles: local
 
   h2:
     console:
