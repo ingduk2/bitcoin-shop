@@ -1,9 +1,9 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb.parser;
+package com.bitcoinshop.outer.bitcoin.websocket.client.parser;
 
 import com.bitcoinshop.outer.bitcoin.restapi.service.BitCoinRestApiService;
-import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParser;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb.BithumbSubscribeDto;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb.dto.BithumbResponseDto;
+import com.bitcoinshop.outer.bitcoin.websocket.model.bithumb.BithumbSubscribe;
+import com.bitcoinshop.outer.bitcoin.websocket.model.bithumb.BithumbResponse;
+import com.bitcoinshop.web.websocket.config.stomp.StompPushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -30,6 +28,8 @@ public class BithumbParser implements BitCoinParser {
 
     private final BitCoinRestApiService restApiService;
     private final ObjectMapper objectMapper;
+    private final StompPushService pushService;
+
 
     @Override
     public void parse(Object frame, Channel channel) throws JsonProcessingException {
@@ -61,16 +61,16 @@ public class BithumbParser implements BitCoinParser {
             }
 
         } else {
-            BithumbResponseDto bithumbResponseDto = objectMapper.readValue(json, BithumbResponseDto.class);
-            log.info("{}", bithumbResponseDto);
-
+            BithumbResponse bithumbResponse = objectMapper.readValue(json, BithumbResponse.class);
+            log.info("{}", bithumbResponse);
+            pushService.bithumbPush(bithumbResponse);
         }
     }
 
     private void sendSubscribe(Channel channel) throws JsonProcessingException {
       List<String> currencyList = restApiService.getBithumbCurrencyList();
 
-        String subscribeJson = BithumbSubscribeDto.getSubscribeJson(currencyList);
+        String subscribeJson = BithumbSubscribe.getSubscribeJson(currencyList);
         log.info("sendSubscribe {}", subscribeJson);
         channel.writeAndFlush(new TextWebSocketFrame(subscribeJson));
     }

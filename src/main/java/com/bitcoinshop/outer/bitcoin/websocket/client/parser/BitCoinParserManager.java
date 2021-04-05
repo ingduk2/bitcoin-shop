@@ -1,9 +1,5 @@
 package com.bitcoinshop.outer.bitcoin.websocket.client.parser;
 
-import com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb.parser.BithumbParser;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.korbit.parser.KorBitParser;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.upbit.parser.UpbitParser;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

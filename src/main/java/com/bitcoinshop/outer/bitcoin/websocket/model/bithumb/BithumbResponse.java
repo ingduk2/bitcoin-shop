@@ -1,4 +1,4 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb.dto;
+package com.bitcoinshop.outer.bitcoin.websocket.model.bithumb;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
-public class BithumbResponseDto {
+public class BithumbResponse {
 
     private String type;
     private Content content;

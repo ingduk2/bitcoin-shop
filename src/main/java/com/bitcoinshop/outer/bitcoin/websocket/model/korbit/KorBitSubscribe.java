@@ -1,4 +1,4 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.korbit;
+package com.bitcoinshop.outer.bitcoin.websocket.model.korbit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,7 +16,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class KorBitSubscribeDto {
+public class KorBitSubscribe {
     private String accessToken;
     private long timestamp;
     private String event;
@@ -49,7 +46,7 @@ public class KorBitSubscribeDto {
     }
 
     public static String of(String accessToken, Events event, String channels) throws JsonProcessingException {
-        KorBitSubscribeDto korBitSubscribeDto = KorBitSubscribeDto.builder()
+        KorBitSubscribe korBitSubscribe = KorBitSubscribe.builder()
                 .accessToken(null)
                 .timestamp(Instant.now().getEpochSecond())
                 .event(event.getEvent())
@@ -58,6 +55,6 @@ public class KorBitSubscribeDto {
                         .build())
                 .build();
 
-        return new ObjectMapper().writeValueAsString(korBitSubscribeDto);
+        return new ObjectMapper().writeValueAsString(korBitSubscribe);
     }
 }

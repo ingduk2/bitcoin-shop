@@ -1,10 +1,10 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.upbit.parser;
+package com.bitcoinshop.outer.bitcoin.websocket.client.parser;
 
 import com.bitcoinshop.outer.bitcoin.restapi.dto.UpbitCurremcyDto;
 import com.bitcoinshop.outer.bitcoin.restapi.service.BitCoinRestApiService;
-import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParser;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.upbit.UpbitSubscribeDto;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.upbit.dto.UpbitResponseDto;
+import com.bitcoinshop.outer.bitcoin.websocket.model.upbit.UpbitSubscribe;
+import com.bitcoinshop.outer.bitcoin.websocket.model.upbit.UpbitResponse;
+import com.bitcoinshop.web.websocket.config.stomp.StompPushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.Channel;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class UpbitParser implements BitCoinParser {
     private final BitCoinRestApiService restApiService;
     private final ObjectMapper objectMapper;
+    private final StompPushService pushService;
 
     @Override
     public void parse(Object frame, Channel channel) throws JsonProcessingException {
@@ -48,8 +49,9 @@ public class UpbitParser implements BitCoinParser {
         BinaryWebSocketFrame binaryWebSocketFrame = frame;
         String responseJson = binaryWebSocketFrame.content().toString(StandardCharsets.UTF_8);
 
-        UpbitResponseDto upbitResponseDto = objectMapper.readValue(responseJson, UpbitResponseDto.class);
-        log.info("reponse : {}", upbitResponseDto);
+        UpbitResponse upbitResponse = objectMapper.readValue(responseJson, UpbitResponse.class);
+        log.info("reponse : {}", upbitResponse);
+        pushService.upbitPush(upbitResponse);
     }
 
     private void sendSubscribe(Channel channel) throws JsonProcessingException {
@@ -59,7 +61,7 @@ public class UpbitParser implements BitCoinParser {
                 .collect(Collectors.toList());
 
 
-        String json = UpbitSubscribeDto.getSubscribeJson("test", "ticker", markets, "SIMPLE");
+        String json = UpbitSubscribe.getSubscribeJson("test", "ticker", markets, "SIMPLE");
         log.info("sendSubscribe {}", json);
         channel.writeAndFlush(new TextWebSocketFrame(json));
     }

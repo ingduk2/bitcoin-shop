@@ -1,6 +1,5 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.upbit;
+package com.bitcoinshop.outer.bitcoin.websocket.model.upbit;
 
-import com.fasterxml.classmate.AnnotationOverrides;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.stream.Stream;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpbitSubscribeDto {
+public class UpbitSubscribe {
 
     private Ticket ticket;
     private Type type;
@@ -70,7 +69,7 @@ public class UpbitSubscribeDto {
                         .build(),
                 Type.builder()
                         .type(type)
-                        .codes(List.of("KRW-BTC"))
+                        .codes(markets)
                         .build(),
                 Format.builder()
                         .format(format)

@@ -1,4 +1,4 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.upbit;
+package com.bitcoinshop.outer.bitcoin.websocket.model.upbit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ class UpbitRequestTest {
     @Test
     void upbit_요청_json생성_테스트() throws JsonProcessingException {
 
-        String json = UpbitSubscribeDto.of("test", "ticker", Stream.of("KRW-BTC", "BTC-BCH"), "SIMPLE");
+        String json = UpbitSubscribe.of("test", "ticker", Stream.of("KRW-BTC", "BTC-BCH"), "SIMPLE");
         System.out.println(json);
 
         assertThat(json).isEqualTo(

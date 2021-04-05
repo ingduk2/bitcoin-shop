@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter
 @RequiredArgsConstructor
-public class WebSocketConnectionDto {
+public class WebSocketConnection {
     private final String name;
     private final String url;
 }

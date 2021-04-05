@@ -1,4 +1,4 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.korbit.dto;
+package com.bitcoinshop.outer.bitcoin.websocket.model.korbit;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
-public class KorbitResponseDto {
+public class KorbitResponse {
 
     private Data data;
 

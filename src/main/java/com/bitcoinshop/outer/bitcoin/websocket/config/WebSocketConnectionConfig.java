@@ -12,5 +12,5 @@ import java.util.List;
 @ConstructorBinding
 @ConfigurationProperties(prefix = "bitcoin.websocket")
 public class WebSocketConnectionConfig {
-    private final List<WebSocketConnectionDto> exchanges;
+    private final List<WebSocketConnection> exchanges;
 }

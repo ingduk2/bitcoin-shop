@@ -1,4 +1,4 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.bithumb;
+package com.bitcoinshop.outer.bitcoin.websocket.model.bithumb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BithumbSubscribeDto {
+public class BithumbSubscribe {
     private BithumbTYPE type;
     private List<String> symbols;
     private List<String> tickTypes;
@@ -26,7 +26,7 @@ public class BithumbSubscribeDto {
 
 
     public static String of(BithumbTYPE type, Stream<String> symbols, Stream<String> tickTypes) throws JsonProcessingException {
-        BithumbSubscribeDto bithumbSubscribeDto = BithumbSubscribeDto.builder()
+        BithumbSubscribe bithumbSubscribe = BithumbSubscribe.builder()
                 .type(BithumbTYPE.ticker)
                 .symbols(symbols.map(String::toUpperCase).collect(Collectors.toList()))
 //                .tickTypes(tickTypes.collect(Collectors.toList()))
@@ -34,17 +34,17 @@ public class BithumbSubscribeDto {
 //                .tickTypes(new ArrayList<>())
                 .build();
 
-        return new ObjectMapper().writeValueAsString(bithumbSubscribeDto);
+        return new ObjectMapper().writeValueAsString(bithumbSubscribe);
     }
 
     public static String getSubscribeJson(List<String> currencyList) throws JsonProcessingException {
-        BithumbSubscribeDto bithumbSubscribeDto = BithumbSubscribeDto.builder()
+        BithumbSubscribe bithumbSubscribe = BithumbSubscribe.builder()
                 .type(BithumbTYPE.ticker)
                 .symbols(currencyList)
 //                .symbols(List.of("BTC_KRW"))
                 .tickTypes(List.of("30M"))
                 .build();
 
-        return new ObjectMapper().writeValueAsString(bithumbSubscribeDto);
+        return new ObjectMapper().writeValueAsString(bithumbSubscribe);
     }
 }

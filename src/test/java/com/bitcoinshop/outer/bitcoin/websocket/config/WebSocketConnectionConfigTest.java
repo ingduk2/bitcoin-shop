@@ -16,10 +16,10 @@ class WebSocketConnectionConfigTest {
 
     @Test
     void 거래소url_설정파일_로딩_테스트() {
-        List<WebSocketConnectionDto> webSocketConnectionDtos = webSocketConnectionConfig.getExchanges();
+        List<WebSocketConnection> webSocketConnections = webSocketConnectionConfig.getExchanges();
 
-        assertThat(webSocketConnectionDtos.get(0)).usingRecursiveComparison().isEqualTo(new WebSocketConnectionDto("bithumb","wss://pubwss.bithumb.com/pub/ws"));
-        assertThat(webSocketConnectionDtos.get(1)).usingRecursiveComparison().isEqualTo(new WebSocketConnectionDto("upbit","wss://api.upbit.com/websocket/v1"));
-        assertThat(webSocketConnectionDtos.get(2)).usingRecursiveComparison().isEqualTo(new WebSocketConnectionDto("korbit","wss://ws.korbit.co.kr/v1/user/push"));
+        assertThat(webSocketConnections.get(0)).usingRecursiveComparison().isEqualTo(new WebSocketConnection("bithumb","wss://pubwss.bithumb.com/pub/ws"));
+        assertThat(webSocketConnections.get(1)).usingRecursiveComparison().isEqualTo(new WebSocketConnection("upbit","wss://api.upbit.com/websocket/v1"));
+        assertThat(webSocketConnections.get(2)).usingRecursiveComparison().isEqualTo(new WebSocketConnection("korbit","wss://ws.korbit.co.kr/v1/user/push"));
     }
 }

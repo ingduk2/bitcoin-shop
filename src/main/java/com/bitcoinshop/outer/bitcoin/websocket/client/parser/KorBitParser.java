@@ -1,9 +1,9 @@
-package com.bitcoinshop.outer.bitcoin.websocket.domain.korbit.parser;
+package com.bitcoinshop.outer.bitcoin.websocket.client.parser;
 
 import com.bitcoinshop.outer.bitcoin.restapi.service.BitCoinRestApiService;
-import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParser;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.korbit.KorBitSubscribeDto;
-import com.bitcoinshop.outer.bitcoin.websocket.domain.korbit.dto.KorbitResponseDto;
+import com.bitcoinshop.outer.bitcoin.websocket.model.korbit.KorBitSubscribe;
+import com.bitcoinshop.outer.bitcoin.websocket.model.korbit.KorbitResponse;
+import com.bitcoinshop.web.websocket.config.stomp.StompPushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -28,8 +26,9 @@ public class KorBitParser implements BitCoinParser {
     private static String EVENT_PUSH_TICKER = "korbit:push-ticker";
 
     private final ObjectMapper objectMapper;
-
     private final BitCoinRestApiService restApiService;
+    private final StompPushService pushService;
+
 
     @Override
     public void parse(Object frame, Channel channel) throws JsonProcessingException {
@@ -59,9 +58,9 @@ public class KorBitParser implements BitCoinParser {
             sendSubscribe(channel);
 
         } else if (event.equals(EVENT_PUSH_TICKER)) {
-            KorbitResponseDto korbitResponseDto = objectMapper.readValue(recvMsg, KorbitResponseDto.class);
-            log.info("{}",korbitResponseDto);
-
+            KorbitResponse korbitResponse = objectMapper.readValue(recvMsg, KorbitResponse.class);
+            log.info("{}", korbitResponse);
+            pushService.korbitPush(korbitResponse);
         }
     }
 
@@ -69,7 +68,7 @@ public class KorBitParser implements BitCoinParser {
         List<String> currencyList = restApiService.getKorbitCurrencyList();
         String ticker = "ticker:" + String.join(",", currencyList);
 
-        String json = KorBitSubscribeDto.of(null, KorBitSubscribeDto.Events.SUBSCRIBE, ticker);
+        String json = KorBitSubscribe.of(null, KorBitSubscribe.Events.SUBSCRIBE, ticker);
         channel.writeAndFlush(new TextWebSocketFrame(json));
     }
 

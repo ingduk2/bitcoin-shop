@@ -3,7 +3,7 @@ package com.bitcoinshop.outer.bitcoin.websocket;
 import com.bitcoinshop.outer.bitcoin.websocket.client.WebSocketClient;
 import com.bitcoinshop.outer.bitcoin.websocket.client.parser.BitCoinParserManager;
 import com.bitcoinshop.outer.bitcoin.websocket.config.WebSocketConnectionConfig;
-import com.bitcoinshop.outer.bitcoin.websocket.config.WebSocketConnectionDto;
+import com.bitcoinshop.outer.bitcoin.websocket.config.WebSocketConnection;
 import com.bitcoinshop.outer.bitcoin.websocket.config.NettySetting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class WebSocketStarter {
 
     @EventListener(ApplicationReadyEvent.class)
     public void start() {
-        List<WebSocketConnectionDto> exchanges = webSocketConnectionConfig.getExchanges();
+        List<WebSocketConnection> exchanges = webSocketConnectionConfig.getExchanges();
 
         exchanges.forEach(e -> {
             WebSocketClient bean = null;
